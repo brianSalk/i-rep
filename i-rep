@@ -1,0 +1,92 @@
+#! /bin/bash
+# this script will scan a file for all lines matching a regex,
+# it will prompt for each matching line and ask if you want to delete or 
+# replace the current line.
+# if you chose to replace, it will then propt you to enter the replacement string
+# this command will modify your file in place.
+# Function to remove the nth line from a file
+# returns 1
+remove_line() {
+    file=$1
+    line_number=$2
+
+    # Create a temporary file
+    temp_file=$(mktemp)
+
+    # Copy all lines except the nth line to the temporary file
+    awk -v n=$line_number 'NR != n' "$file" >| "$temp_file"
+
+    # Replace the original file with the temporary file
+    mv -f -- "$temp_file" "$file"
+	return 1
+}
+replace_line() {
+    file=$1
+    line_number=$2
+	rep_string="$3"
+
+    # Create a temporary file
+    temp_file=$(mktemp)
+
+    # Copy all lines except the nth line to the temporary file
+    awk -v n=$line_number -v rep=$rep_string 'NR != n;NR == n {print rep}' "$file" >| "$temp_file"
+
+    # Replace the original file with the temporary file
+    mv -f -- "$temp_file" "$file"
+}
+# Function to find the line number of the first matching line
+find_line_number() {
+    file=$1
+    pattern=$2
+	start=$3
+    # Use grep to search for the pattern in the file and return the line number
+	line_number=$(grep -n "$pattern" <(tail -n +"$start" "$file") | head -n 1 | cut -d ':' -f 1)
+
+    # Print the line number if it is found, otherwise print an error message
+    if [[ -n $line_number ]]; then
+		echo $(( $((line_number - 1)) + start ))
+    else
+        echo "NA"
+    fi
+}
+# Function to display a specific line of a file
+display_line_by_number() {
+    file=$1
+    line_number=$2
+
+    # Use sed to extract the specific line from the file
+    line=$(sed -n "${line_number}p" "$file")
+
+    # Print the line if it exists, otherwise print an error message
+    if [[ -n $line ]]; then
+		echo "$line " '(d/r/I)?'
+		read response
+		if [[ ${response,,} == 'd' ]]
+		then
+			remove_line $file $line_number
+		elif [[ ${response,,} == 'r' ]]
+		then
+			read -p 'replacement string: ' rep_string
+			replace_line $file $line_number "$rep_string"
+		fi
+    else
+		echo 'no more matches'
+    fi
+	if [[ $? -eq 1 ]]
+	then
+		return 1
+	fi
+}
+starting_line=1
+while [[ $(find_line_number "$1" "$2" $starting_line ) != "NA" ]]
+do
+	line_num=$(find_line_number "$1" "$2" $starting_line)
+	display_line_by_number "$1" "$line_num"
+	ret_val=$?
+	starting_line=$line_num
+	((starting_line++))
+	if [[ $ret_val -eq 1 ]]
+	then
+		((starting_line--))
+	fi
+done
