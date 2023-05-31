@@ -78,7 +78,6 @@ display_line_by_number() {
 	fi
 }
 main() {
-	echo 
 	if [[ $# -eq 0 ]] || [[ $# -gt 3 ]]
 	then
 		echo 'i-rep expects'
