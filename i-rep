@@ -80,7 +80,6 @@ display_line_by_number() {
 main() {
 	if [[ $# -eq 0 ]] || [[ $# -gt 3 ]]
 	then
-		echo 'i-rep expects'
 		echo 'i-rep file [pattern] [starting-line]'
 		return 1	
 	fi
