@@ -77,16 +77,43 @@ display_line_by_number() {
 		return 1
 	fi
 }
-starting_line=1
-while [[ $(find_line_number "$1" "$2" $starting_line ) != "NA" ]]
-do
-	line_num=$(find_line_number "$1" "$2" $starting_line)
-	display_line_by_number "$1" "$line_num"
-	ret_val=$?
-	starting_line=$line_num
-	((starting_line++))
-	if [[ $ret_val -eq 1 ]]
+main() {
+	echo 
+	if [[ $# -eq 0 ]] || [[ $# -gt 3 ]]
 	then
-		((starting_line--))
+		echo 'i-rep expects'
+		echo 'i-rep file [pattern] [starting-line]'
+		return 1	
 	fi
-done
+	if [[ ! -f $1 ]]
+	then
+		echo "$1 must be a file"
+		return 1
+	fi
+	starting_line=1
+	if [[ $# -eq 3 ]] && [[ ! $3 =~ ^[0-9]+$ ]]
+	then
+		echo 'i-rep expects'
+		echo 'i-rep file [pattern] [starting-line]'
+		return 1	
+	elif [[  $# -eq 3 ]]
+	then
+		starting_line=$3
+	fi
+
+	while [[ $(find_line_number "$1" "$2" $starting_line ) != "NA" ]]
+	do
+		line_num=$(find_line_number "$1" "$2" $starting_line)
+		display_line_by_number "$1" "$line_num"
+		ret_val=$?
+		starting_line=$line_num
+		((starting_line++))
+		if [[ $ret_val -eq 1 ]]
+		then
+			((starting_line--))
+		fi
+	done
+
+
+}
+main $@
