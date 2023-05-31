@@ -10,4 +10,28 @@ so the interactive part comes in handy.
 after cloning this to your computer you may want to move/copy it to /usr/local/bin or some other directory in your PATH environment variable.  
 # use
 ```i-rep file-to-modify [pattern] [starting-line-number]```
+# examples
+let's say you have the following file called words.txt:  
+```
+words
+this
+has
+make
+can
+stands
+```
+and I want to remove all the plurals.  I could run
+```
+i-rep words.txt ".*[sS]$"
+```
+and then interactivly decide what to do with each word that ends with 's'
 
+If I want to start somewhere in the middle of the file, say line 3, I could do:  
+```
+i-rep words.txt ".*[sS]$" 3
+```
+and it will skip the first three lines even if they match the pattern  
+if I want to match everyline, I can simply omit the pattern and line number and just provide the file:  
+```
+i-rep words.txt
+```
