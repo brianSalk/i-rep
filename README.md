@@ -6,6 +6,9 @@ it alows the user to look at a line of text and interactivly decide whether they
 I created this when I was making a [wordle](https://github.com/brianSalk/wordle-rs) game that had a word_list file  
 and I wanted to remove plurals, but not all words ending in 's' are plural  
 so the interactive part comes in handy.  
+```diff
+- WARNING: this program modifies your input file in place and does not make a backup copy!
+```
 # setup
 after cloning this to your computer you may want to move/copy it to /usr/local/bin or some other directory in your PATH environment variable.  
 # use
