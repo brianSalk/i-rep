@@ -78,10 +78,18 @@ display_line_by_number() {
 	fi
 }
 main() {
-	if [[ $# -eq 0 ]] || [[ $# -gt 3 ]]
+	if [[ $# -eq 0 ]]
 	then
+		echo 'i-rep usage:'
 		echo 'i-rep file [pattern] [starting-line]'
 		return 1	
+	fi
+	if [[ $# -gt 3 ]]
+	then
+		echo 'i-rep expects [1,3] arguments' 
+		echo "you provided $#"
+		echo 'did you forget to quote a pattern?'
+		return 1
 	fi
 	if [[ ! -f $1 ]]
 	then
