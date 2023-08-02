@@ -119,7 +119,5 @@ main() {
 			((starting_line--))
 		fi
 	done
-
-
 }
 main $@
