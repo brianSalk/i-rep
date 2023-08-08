@@ -100,7 +100,7 @@ main() {
 	if [[ $# -eq 3 ]] && [[ ! $3 =~ ^[0-9]+$ ]]
 	then
 		echo 'i-rep expects'
-		echo 'i-rep file [pattern] [starting-line]'
+		echo 'i-rep file [pattern] [starting-line-number]'
 		return 1	
 	elif [[  $# -eq 3 ]]
 	then
