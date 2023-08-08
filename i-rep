@@ -68,6 +68,9 @@ display_line_by_number() {
 		then
 			read -p 'replacement string: ' rep_string
 			replace_line $file $line_number "$rep_string"
+		elif [[ ${response,,} == 'q' ]]
+		then
+			return 2
 		fi
     else
 		echo 'no more matches'
@@ -117,6 +120,9 @@ main() {
 		if [[ $ret_val -eq 1 ]]
 		then
 			((starting_line--))
+		elif [[ $ret_val -eq 2 ]]
+		then
+			break
 		fi
 	done
 }
