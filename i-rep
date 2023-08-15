@@ -14,7 +14,7 @@ remove_line() {
     temp_file=$(mktemp)
 
     # Copy all lines except the nth line to the temporary file
-    awk -v n=$line_number 'NR != n' "$file" >| "$temp_file"
+    awk -v n="${line_number}" 'NR != n' "$file" >| "$temp_file"
 
     # Replace the original file with the temporary file
     mv -f -- "$temp_file" "$file"
@@ -29,7 +29,7 @@ replace_line() {
     temp_file=$(mktemp)
 
     # Copy all lines except the nth line to the temporary file
-    awk -v n=$line_number -v rep=$rep_string 'NR != n;NR == n {print rep}' "$file" >| "$temp_file"
+    awk -v n="${line_number}" -v rep=$rep_string 'NR != n;NR == n {print rep}' "$file" >| "$temp_file"
 
     # Replace the original file with the temporary file
     mv -f -- "$temp_file" "$file"
@@ -63,11 +63,11 @@ display_line_by_number() {
 		read response
 		if [[ ${response,,} == 'd' ]]
 		then
-			remove_line $file $line_number
+			remove_line "$file" "$line_number"
 		elif [[ ${response,,} == 'r' ]]
 		then
 			read -p 'replacement string: ' rep_string
-			replace_line $file $line_number "$rep_string"
+			replace_line "$file" "$line_number" "$rep_string"
 		elif [[ ${response,,} == 'q' ]]
 		then
 			return 2
@@ -110,9 +110,9 @@ main() {
 		starting_line=$3
 	fi
 
-	while [[ $(find_line_number "$1" "$2" $starting_line ) != "NA" ]]
+	while [[ $(find_line_number "$1" "$2" "$starting_line" ) != "NA" ]]
 	do
-		line_num=$(find_line_number "$1" "$2" $starting_line)
+		line_num=$(find_line_number "$1" "$2" "$starting_line")
 		display_line_by_number "$1" "$line_num"
 		ret_val=$?
 		starting_line=$line_num
