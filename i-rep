@@ -29,7 +29,7 @@ replace_line() {
     temp_file=$(mktemp)
 
     # Copy all lines except the nth line to the temporary file
-    awk -v n="${line_number}" -v rep=$rep_string 'NR != n;NR == n {print rep}' "$file" >| "$temp_file"
+    awk -v n="${line_number}" -v rep="$rep_string" 'NR != n;NR == n {print rep}' "$file" >| "$temp_file"
 
     # Replace the original file with the temporary file
     mv -f -- "$temp_file" "$file"
@@ -60,13 +60,13 @@ display_line_by_number() {
     # Print the line if it exists, otherwise print an error message
     if [[ -n $line ]]; then
 		echo "$line " '(d/r/I)?'
-		read response
+		read -r response
 		if [[ ${response,,} == 'd' ]]
 		then
 			remove_line "$file" "$line_number"
 		elif [[ ${response,,} == 'r' ]]
 		then
-			read -p 'replacement string: ' rep_string
+			read -rp 'replacement string: ' rep_string
 			replace_line "$file" "$line_number" "$rep_string"
 		elif [[ ${response,,} == 'q' ]]
 		then
